@@ -1,0 +1,643 @@
+/* ================================================================
+   WallCalendar.module.css
+   Wall-calendar aesthetic: spiral binding, hero image, blue chevron,
+   range selection states, notes panel, full responsiveness.
+   ================================================================ */
+
+/* ── Fonts ─────────────────────────────────────────────────────── */
+/* Imported in index.html: DM Sans + Cormorant Garamond */
+
+/* ── Design Tokens ─────────────────────────────────────────────── */
+:root {
+  --cal-blue:        #1565C0;
+  --cal-blue-mid:    #1976D2;
+  --cal-blue-light:  #E3F2FD;
+  --cal-blue-hover:  #BBDEFB;
+  --cal-blue-dark:   #0D47A1;
+  --cal-accent:      #42A5F5;
+
+  --cal-text:        #1A237E;
+  --cal-text-body:   #212121;
+  --cal-text-muted:  #78909C;
+  --cal-text-light:  #B0BEC5;
+
+  --cal-bg:          #FFFFFF;
+  --cal-surface:     #F5F9FF;
+  --cal-border:      #E8EDF5;
+
+  --cal-holiday:     #E53935;
+  --cal-today-ring:  #1565C0;
+  --cal-weekend:     #1565C0;
+
+  --shadow-card:
+    0 2px 4px rgba(0,0,0,0.04),
+    0 8px 24px rgba(21,101,192,0.10),
+    0 32px 80px rgba(0,0,0,0.12);
+  --shadow-binding:
+    0 2px 6px rgba(0,0,0,0.18);
+}
+
+/* ── Calendar outer wrapper (centres on page) ───────────────────── */
+.calendarWrap {
+  width: 100%;
+  max-width: 860px;
+  perspective: 1200px;
+}
+
+/* ── Calendar sheet ─────────────────────────────────────────────── */
+.calendar {
+  background: var(--cal-bg);
+  border-radius: 4px 4px 8px 8px;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  position: relative;
+  /* subtle page-curl bottom */
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+/* ── Spiral binding ─────────────────────────────────────────────── */
+.binding {
+  background: linear-gradient(to bottom, #cfd8dc 0%, #b0bec5 60%, #90a4ae 100%);
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 0 24px;
+  box-shadow: var(--shadow-binding);
+  position: relative;
+  z-index: 10;
+}
+
+.bindingHole {
+  width: 16px;
+  height: 20px;
+  background: #eceff1;
+  border-radius: 8px;
+  border: 1.5px solid #90a4ae;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.15),
+    0 1px 2px rgba(255,255,255,0.6);
+  flex-shrink: 0;
+}
+
+.bindingCoil {
+  width: 8px;
+  height: 12px;
+  border-radius: 4px;
+  background: linear-gradient(to bottom, #78909c, #546e7a);
+  border: 1px solid #607d8b;
+}
+
+/* ── Hero image section ─────────────────────────────────────────── */
+.hero {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+  background: #1a237e;
+}
+
+.heroImgWrap {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+  transition: transform 190ms ease-in, opacity 190ms ease-in;
+}
+
+.heroImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  display: block;
+}
+
+/* ── Slide animations for month change ─────────────────────────── */
+.slideOutLeft {
+  transform: translateX(-6%) scale(0.97);
+  opacity: 0;
+}
+.slideOutRight {
+  transform: translateX(6%) scale(0.97);
+  opacity: 0;
+}
+.slideInRight {
+  animation: slideFromRight 380ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+.slideInLeft {
+  animation: slideFromLeft 380ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+@keyframes slideFromRight {
+  from { transform: translateX(7%) scale(0.97); opacity: 0; }
+  to   { transform: translateX(0)   scale(1);    opacity: 1; }
+}
+@keyframes slideFromLeft {
+  from { transform: translateX(-7%) scale(0.97); opacity: 0; }
+  to   { transform: translateX(0)   scale(1);    opacity: 1; }
+}
+
+/* ── Blue chevron overlay ───────────────────────────────────────── */
+.heroOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  pointer-events: none;
+}
+
+.chevronSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.chevronSvg path:first-child {
+  fill: var(--cal-blue);
+}
+
+.chevronShine {
+  fill: var(--cal-blue-mid);
+  opacity: 0.25;
+  clip-path: polygon(55% 0, 100% 0, 100% 100%, 55% 100%);
+}
+
+/* ── Month badge (year + JANUARY) ───────────────────────────────── */
+.monthBadge {
+  position: absolute;
+  bottom: 18px;
+  right: 28px;
+  text-align: right;
+  color: #fff;
+  pointer-events: none;
+}
+
+.yearLabel {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  opacity: 0.85;
+}
+
+.monthLabel {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.25);
+}
+
+/* ── Navigation arrows ──────────────────────────────────────────── */
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-60%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s, transform 0.18s;
+  border: 1px solid rgba(255,255,255,0.28);
+  line-height: 1;
+  padding-bottom: 2px;
+  z-index: 5;
+}
+.navBtn:hover {
+  background: rgba(255,255,255,0.32);
+  transform: translateY(-60%) scale(1.08);
+}
+.navBtn:active {
+  transform: translateY(-60%) scale(0.95);
+}
+.navPrev { left: 16px; }
+.navNext { right: 16px; }
+
+/* ── Body (notes + calendar) ────────────────────────────────────── */
+.body {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  min-height: 280px;
+}
+
+/* ── Notes panel ────────────────────────────────────────────────── */
+.notesPanel {
+  background: var(--cal-surface);
+  border-right: 1px solid var(--cal-border);
+  padding: 20px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notesMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.notesTitle {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cal-text-muted);
+}
+
+.notesLines {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.notesLine {
+  height: 1px;
+  background: var(--cal-border);
+}
+
+.notesArea {
+  flex: 1;
+  width: 100%;
+  border: 1px solid var(--cal-border);
+  border-radius: 6px;
+  padding: 10px 10px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--cal-text-body);
+  background: white;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  line-height: 1.7;
+  resize: none;
+  min-height: 100px;
+}
+.notesArea:focus {
+  border-color: var(--cal-blue-mid);
+  box-shadow: 0 0 0 3px rgba(21,101,192,0.12);
+}
+.notesArea::placeholder {
+  color: var(--cal-text-light);
+  font-style: italic;
+}
+
+.rangeInfo {
+  background: var(--cal-blue-light);
+  border-radius: 6px;
+  padding: 8px 10px;
+  border-left: 3px solid var(--cal-blue);
+}
+
+.rangeLabel {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--cal-blue-dark);
+  line-height: 1.4;
+}
+
+.rangeDays {
+  font-size: 10px;
+  color: var(--cal-blue-mid);
+  margin-top: 2px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.clearBtn {
+  font-size: 11px;
+  color: var(--cal-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  transition: color 0.15s;
+}
+.clearBtn:hover {
+  color: var(--cal-holiday);
+}
+
+/* ── Calendar section ───────────────────────────────────────────── */
+.calendarSection {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px 12px;
+  gap: 10px;
+}
+
+/* ── Grid wrapper ───────────────────────────────────────────────── */
+.gridWrap {
+  flex: 1;
+}
+
+/* ── Day header row ─────────────────────────────────────────────── */
+.dayHeaders {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+
+.dayHeader {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cal-text-muted);
+  text-align: center;
+  padding: 4px 0;
+}
+
+.weekendHeader {
+  color: var(--cal-weekend);
+}
+
+/* ── Calendar grid ──────────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.emptyCell {
+  /* spacer */
+}
+
+/* ── Day cell ───────────────────────────────────────────────────── */
+.dayCell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+  user-select: none;
+  outline: none;
+}
+
+.dayCell:hover {
+  background: var(--cal-blue-hover);
+}
+.dayCell:hover .dayNumber {
+  color: var(--cal-blue-dark);
+}
+
+.dayNumber {
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--cal-text-body);
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+
+/* Weekend coloring */
+.weekend .dayNumber {
+  color: var(--cal-weekend);
+}
+.weekend {
+  /* subtle tint */
+}
+
+/* Today */
+.today .dayNumber {
+  font-weight: 600;
+  color: var(--cal-blue-dark);
+}
+
+.todayRing {
+  position: absolute;
+  inset: 2px;
+  border-radius: 5px;
+  border: 1.5px solid var(--cal-blue-mid);
+  pointer-events: none;
+}
+
+/* Range start/end */
+.rangeStart,
+.rangeEnd {
+  background: var(--cal-blue) !important;
+  border-radius: 6px;
+}
+.rangeStart .dayNumber,
+.rangeEnd .dayNumber {
+  color: #fff !important;
+  font-weight: 600;
+}
+.rangeStart:hover,
+.rangeEnd:hover {
+  background: var(--cal-blue-dark) !important;
+}
+.rangeStart .todayRing,
+.rangeEnd .todayRing {
+  border-color: rgba(255,255,255,0.5);
+}
+
+/* In-range cells */
+.inRange {
+  background: var(--cal-blue-light);
+  border-radius: 0;
+}
+.inRange .dayNumber {
+  color: var(--cal-blue-dark);
+}
+
+/* Hover preview range */
+.hoverRange {
+  background: var(--cal-blue-hover);
+  border-radius: 0;
+}
+.hoverRange .dayNumber {
+  color: var(--cal-blue-dark);
+}
+
+/* Holiday dot */
+.holidayDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--cal-holiday);
+  margin-top: 2px;
+  position: relative;
+  z-index: 1;
+}
+.hasHoliday.rangeStart .holidayDot,
+.hasHoliday.rangeEnd .holidayDot {
+  background: rgba(255,255,255,0.8);
+}
+
+/* ── Legend row ─────────────────────────────────────────────────── */
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 4px;
+  border-top: 1px solid var(--cal-border);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--cal-text-muted);
+  letter-spacing: 0.04em;
+}
+
+.legendSwatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+.swatchToday {
+  background: transparent;
+  border: 1.5px solid var(--cal-blue-mid);
+}
+.swatchRange {
+  background: var(--cal-blue);
+}
+.legendDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cal-holiday);
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+
+/* ── Tablet (≤700px) ────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .hero {
+    height: 220px;
+  }
+  .monthLabel {
+    font-size: 30px;
+  }
+  .body {
+    grid-template-columns: 1fr;
+  }
+  .notesPanel {
+    border-right: none;
+    border-bottom: 1px solid var(--cal-border);
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+  .notesMeta {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+  .notesLines {
+    flex-direction: row;
+    gap: 6px;
+    display: none; /* hidden on tablet */
+  }
+  .notesArea {
+    width: 100%;
+    min-height: 60px;
+  }
+  .calendarSection {
+    padding: 12px 14px 10px;
+  }
+  .dayCell {
+    height: 34px;
+  }
+}
+
+/* ── Mobile (≤480px) ────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .calendarWrap {
+    max-width: 100%;
+  }
+  .hero {
+    height: 180px;
+  }
+  .monthLabel {
+    font-size: 24px;
+  }
+  .yearLabel {
+    font-size: 12px;
+  }
+  .monthBadge {
+    right: 16px;
+    bottom: 12px;
+  }
+  .navBtn {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+  .binding {
+    height: 24px;
+    padding: 0 12px;
+  }
+  .bindingHole {
+    width: 13px;
+    height: 17px;
+  }
+  .dayHeader {
+    font-size: 8px;
+    letter-spacing: 0.06em;
+  }
+  .dayNumber {
+    font-size: 11px;
+  }
+  .dayCell {
+    height: 30px;
+    border-radius: 4px;
+  }
+  .calendarSection {
+    padding: 10px 10px 8px;
+  }
+  .grid {
+    gap: 1px;
+  }
+  .legend {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .legendItem {
+    font-size: 9px;
+  }
+  .notesArea {
+    font-size: 13px;
+  }
+}
+
+/* ── Large screens ─────────────────────────────────────────────── */
+@media (min-width: 900px) {
+  .hero {
+    height: 310px;
+  }
+  .monthLabel {
+    font-size: 44px;
+  }
+  .body {
+    grid-template-columns: 200px 1fr;
+  }
+  .dayCell {
+    height: 40px;
+  }
+  .dayNumber {
+    font-size: 13.5px;
+  }
+}
