@@ -46,7 +46,7 @@ wall-calendar/
 
 ```bash
 # 1. Clone / download this repo
-git clone https://github.com/your-username/wall-calendar.git
+git clone https://github.com/HarshDhoriyani/wall-calendar.git
 cd wall-calendar
 
 # 2. Install dependencies
